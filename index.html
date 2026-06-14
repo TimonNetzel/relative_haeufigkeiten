@@ -1,0 +1,1040 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Interaktives Arbeitsblatt: s(t) → v(t) → a(t)</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --ink: #132034;
+      --muted: #5b6a80;
+      --grid: #d7deea;
+      --axis: #223049;
+      --s: #1f63d8;
+      --v: #0d8f6c;
+      --a: #c94934;
+      --accent: #7637e7;
+      --warn: #f0a202;
+      --soft: #eef4ff;
+      --soft2: #f8faff;
+      --border: #dbe3ef;
+      --shadow: 0 10px 28px rgba(19, 32, 52, 0.08);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      color: var(--ink);
+      background: radial-gradient(circle at top left, #e8efff 0, var(--bg) 46%, #fbfcff 100%);
+      line-height: 1.45;
+    }
+
+    header {
+      padding: 28px clamp(16px, 4vw, 48px) 22px;
+      color: white;
+      background: linear-gradient(135deg, #172238 0%, #284a84 100%);
+    }
+
+    .kicker {
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+      opacity: 0.88;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.55rem, 3.5vw, 2.65rem);
+      line-height: 1.15;
+    }
+
+    header p {
+      max-width: 1050px;
+      margin: 14px 0 0;
+      color: #eaf0ff;
+      font-size: clamp(1rem, 1.4vw, 1.15rem);
+    }
+
+    main {
+      width: min(1260px, calc(100% - 28px));
+      margin: 20px auto 54px;
+    }
+
+    section,
+    .card,
+    .control-panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    section {
+      margin-bottom: 18px;
+      padding: clamp(16px, 2.4vw, 26px);
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      font-size: clamp(1.2rem, 2.3vw, 1.65rem);
+    }
+
+    h3 {
+      margin: 0 0 10px;
+      font-size: 1.07rem;
+    }
+
+    p { margin-top: 0; }
+
+    .intro-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.18fr) minmax(300px, 0.82fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .context-box,
+    .teacher-note {
+      padding: 14px 16px;
+      background: #f3f7ff;
+      border: 1px solid #d7e4fb;
+      border-radius: 14px;
+    }
+
+    .context-box p,
+    .teacher-note p { margin: 0; }
+
+    .formula-box {
+      padding: 16px;
+      border-radius: 14px;
+      background: #fbfcff;
+      border: 1px solid var(--border);
+    }
+
+    .formula {
+      display: block;
+      margin: 8px 0;
+      padding: 9px 12px;
+      border-left: 5px solid var(--accent);
+      border-radius: 10px;
+      background: #f6f1ff;
+      font-size: clamp(1rem, 1.6vw, 1.18rem);
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    .formula.small {
+      font-size: 1rem;
+      border-left-color: #9eb5e8;
+      background: #f6f8fd;
+    }
+
+    .frac {
+      display: inline-block;
+      vertical-align: middle;
+      text-align: center;
+      line-height: 1.05;
+    }
+
+    .frac > span:first-child {
+      display: block;
+      border-bottom: 1px solid currentColor;
+      padding: 0 2px 2px;
+    }
+
+    .frac > span:last-child {
+      display: block;
+      padding: 2px 2px 0;
+    }
+
+    .control-panel {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      margin: 18px 0;
+      padding: 16px;
+      background: rgba(255,255,255,0.96);
+      backdrop-filter: blur(10px);
+    }
+
+    .slider-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14px;
+      align-items: center;
+    }
+
+    label[for="timeSlider"] {
+      font-weight: 500;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      margin-top: 10px;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    .jump-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    button {
+      border: 1px solid #c9d6e9;
+      border-radius: 999px;
+      padding: 8px 11px;
+      color: var(--ink);
+      background: #f8fbff;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button:hover,
+    button:focus-visible {
+      outline: none;
+      border-color: var(--accent);
+      background: #f3efff;
+    }
+
+    .values {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(135px, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .value-card {
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: #f7f9fd;
+    }
+
+    .value-label {
+      display: block;
+      margin-bottom: 3px;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .value-number {
+      display: block;
+      font-size: clamp(1.05rem, 2.2vw, 1.35rem);
+      font-weight: 850;
+    }
+
+    .status {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border: 1px solid #f5daa2;
+      border-radius: 12px;
+      background: #fff8e8;
+      font-weight: 700;
+    }
+
+    .graph-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .graph-card {
+      padding: 14px;
+      overflow: hidden;
+    }
+
+    .graph-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 7px;
+    }
+
+    .badge,
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: #f8fafc;
+    }
+
+    .badge {
+      padding: 5px 9px;
+      font-size: 0.84rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: var(--accent);
+      flex: 0 0 auto;
+    }
+
+    .dot.s { background: var(--s); }
+    .dot.v { background: var(--v); }
+    .dot.a { background: var(--a); }
+    .dot.warn { background: var(--warn); }
+
+    .graph-wrap {
+      width: 100%;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: #fcfdff;
+    }
+
+    svg {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .graph-hint {
+      min-height: 82px;
+      margin-top: 10px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #f6f8fc;
+    }
+
+    .graph-hint strong { color: #18243a; }
+
+    .overview { margin-top: 18px; }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .legend span { padding: 5px 8px; }
+
+    .task-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .task {
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: #fbfcff;
+    }
+
+    .task p {
+      margin: 0 0 10px;
+      font-weight: 700;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 88px;
+      resize: vertical;
+      padding: 11px;
+      color: var(--ink);
+      background: white;
+      border: 1px solid #cbd6e6;
+      border-radius: 12px;
+      font: inherit;
+    }
+
+    textarea:focus {
+      outline: 3px solid rgba(118, 55, 231, 0.18);
+      border-color: var(--accent);
+    }
+
+    details {
+      margin-top: 10px;
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #f6f8fd;
+    }
+
+    summary {
+      color: #29416e;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    details p {
+      margin: 8px 0 0;
+      color: var(--ink);
+      font-weight: 400;
+    }
+
+    .teacher-note {
+      margin-bottom: 12px;
+      border-left: 5px solid var(--accent);
+      background: #f9fbff;
+    }
+
+    .axis { stroke: var(--axis); stroke-width: 1.8; }
+    .grid-line { stroke: var(--grid); stroke-width: 1; }
+    .tick-text { fill: #4c5b70; font-size: 13px; }
+    .axis-label { fill: #24324a; font-size: 15px; font-weight: 800; }
+    .curve { fill: none; stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
+    .curve-s { stroke: var(--s); }
+    .curve-v { stroke: var(--v); }
+    .curve-a { stroke: var(--a); }
+    .helper { stroke: var(--accent); stroke-width: 2; stroke-dasharray: 7 5; opacity: 0.86; }
+    .helper-horizontal { stroke: var(--accent); stroke-width: 1.7; stroke-dasharray: 4 5; opacity: 0.7; }
+    .milestone { stroke: var(--warn); stroke-width: 2; stroke-dasharray: 5 5; }
+    .zero-line { stroke: #627088; stroke-width: 1.5; stroke-dasharray: 4 4; }
+    .tangent { stroke: #6a34c7; stroke-width: 3; stroke-dasharray: 8 5; opacity: 0.9; }
+    .point { stroke: white; stroke-width: 3; }
+    .point-s { fill: var(--s); }
+    .point-v { fill: var(--v); }
+    .point-a { fill: var(--a); }
+    .point-current { fill: var(--accent); }
+    .label-bg { fill: rgba(255,255,255,0.94); stroke: #d4dcec; stroke-width: 1; }
+    .mini-label { fill: #26344d; font-size: 13px; font-weight: 800; }
+    .overview-label { fill: #26344d; font-size: 14px; font-weight: 850; }
+
+    @media (max-width: 980px) {
+      .intro-grid,
+      .graph-grid,
+      .task-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .control-panel { position: static; }
+
+      .values { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 560px) {
+      main { width: min(100% - 18px, 1260px); }
+      header { padding-inline: 16px; }
+      .slider-row { grid-template-columns: 1fr; }
+      .jump-buttons { justify-content: stretch; }
+      .jump-buttons button { flex: 1; }
+      .values { grid-template-columns: 1fr; }
+      .graph-title { align-items: flex-start; flex-direction: column; }
+    }
+
+    @media print {
+      body { background: white; }
+      .control-panel { position: static; box-shadow: none; }
+      section,
+      .card,
+      .control-panel { box-shadow: none; break-inside: avoid; }
+      textarea { min-height: 110px; }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div class="kicker">Klasse 11NF · Bildungsgang Physiktechnik · Mathematik Grundkurs</div>
+  <h1>Graphischer Zusammenhang: Wegfunktion, Geschwindigkeitsfunktion und Beschleunigungsfunktion</h1>
+  <p>Eine Düse eines 3D-Druckers bewegt sich entlang der x-Achse. Wir nutzen den Kontext nur als Einstieg. Im Mittelpunkt steht der graphische Zusammenhang der Ableitungen: <strong>s(t) → v(t) → a(t)</strong>.</p>
+</header>
+
+<main>
+  <section aria-labelledby="grundlage">
+    <div class="intro-grid">
+      <div>
+        <h2 id="grundlage">1. Ausgangsfunktion und Ableitungen</h2>
+        <div class="context-box">
+          <p>Gegeben ist die Wegfunktion im Zeitraum <strong>0 ≤ t ≤ 1</strong>. Die Zeit <strong>t</strong> wird in Sekunden gemessen. Der Weg <strong>s(t)</strong> wird in Millimetern gemessen.</p>
+        </div>
+        <span class="formula">s(t) = 270 · t<sup>2</sup> − 180 · t<sup>3</sup></span>
+        <p>Die Geschwindigkeit ist die Ableitung des Weges nach der Zeit. Die Beschleunigung ist die Ableitung der Geschwindigkeit nach der Zeit.</p>
+      </div>
+
+      <div class="formula-box">
+        <h3>Kurze Herleitung</h3>
+        <span class="formula small">s′(t) = <span class="frac"><span>ds</span><span>dt</span></span> = v(t)</span>
+        <span class="formula small">s′(t) = 540 · t − 540 · t<sup>2</sup></span>
+        <span class="formula small">v(t) = 540 · t − 540 · t<sup>2</sup></span>
+        <span class="formula small">v′(t) = <span class="frac"><span>dv</span><span>dt</span></span> = a(t)</span>
+        <span class="formula small">a(t) = 540 − 1080 · t</span>
+        <p style="margin:10px 0 0; color:var(--muted);">Einheiten: v(t) in mm/s, a(t) in mm/s².</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="control-panel" aria-label="Zeitregler und Funktionswerte">
+    <div class="slider-row">
+      <label for="timeSlider">
+        <strong>Zeitregler:</strong> Bewege den Regler langsam von 0 s bis 1 s. Beobachte alle Graphen gleichzeitig.
+        <input id="timeSlider" type="range" min="0" max="1" step="0.01" value="0.00">
+      </label>
+      <div class="jump-buttons" aria-label="Schnellwahl">
+        <button type="button" data-jump="0">Start</button>
+        <button type="button" data-jump="0.5">max. v / a = 0</button>
+        <button type="button" data-jump="1">Ende</button>
+      </div>
+    </div>
+
+    <div class="values" aria-live="polite">
+      <div class="value-card">
+        <span class="value-label">aktuelles t</span>
+        <span class="value-number" id="valueT">0,00 s</span>
+      </div>
+      <div class="value-card">
+        <span class="value-label">s(t)</span>
+        <span class="value-number" id="valueS">0,00 mm</span>
+      </div>
+      <div class="value-card">
+        <span class="value-label">v(t)</span>
+        <span class="value-number" id="valueV">0,00 mm/s</span>
+      </div>
+      <div class="value-card">
+        <span class="value-label">a(t)</span>
+        <span class="value-number" id="valueA">540,00 mm/s²</span>
+      </div>
+    </div>
+
+    <div class="status" id="motionStatus">Zu Beginn ist die Geschwindigkeit 0. Die Beschleunigung ist positiv.</div>
+  </div>
+
+  <section aria-labelledby="einzelgraphen">
+    <h2 id="einzelgraphen">2. Drei einzelne Koordinatensysteme</h2>
+
+    <div class="graph-grid">
+      <article class="card graph-card">
+        <div class="graph-title">
+          <h3>Weg s(t)</h3>
+          <span class="badge"><span class="dot s"></span>s(t) in mm</span>
+        </div>
+        <div class="graph-wrap">
+          <svg id="graphS" viewBox="0 0 720 340" role="img" aria-label="Graph der Wegfunktion s(t)"></svg>
+        </div>
+        <div class="graph-hint" id="sNote">
+          <strong>Merke:</strong> Die Steigung des s-Graphen ist die Geschwindigkeit v(t).
+        </div>
+      </article>
+
+      <article class="card graph-card">
+        <div class="graph-title">
+          <h3>Geschwindigkeit v(t)</h3>
+          <span class="badge"><span class="dot v"></span>v(t) in mm/s</span>
+        </div>
+        <div class="graph-wrap">
+          <svg id="graphV" viewBox="0 0 720 340" role="img" aria-label="Graph der Geschwindigkeitsfunktion v(t)"></svg>
+        </div>
+        <div class="graph-hint" id="vNote">
+          <strong>Merke:</strong> Die Steigung des v-Graphen ist die Beschleunigung a(t).
+        </div>
+      </article>
+
+      <article class="card graph-card">
+        <div class="graph-title">
+          <h3>Beschleunigung a(t)</h3>
+          <span class="badge"><span class="dot a"></span>a(t) in mm/s²</span>
+        </div>
+        <div class="graph-wrap">
+          <svg id="graphA" viewBox="0 0 720 340" role="img" aria-label="Graph der Beschleunigungsfunktion a(t)"></svg>
+        </div>
+        <div class="graph-hint" id="aNote">
+          <strong>Merke:</strong> Ist a(t) positiv, nimmt v(t) zu. Ist a(t) negativ, nimmt v(t) ab.
+        </div>
+      </article>
+    </div>
+
+    <div class="overview">
+      <h2>3. Gemeinsame Übersicht mit gleicher Zeitachse</h2>
+      <div class="teacher-note">
+        <p>Alle drei Graphen liegen untereinander. Die Zeitachse ist gleich. Die y-Skala ist in jeder Zeile passend zur jeweiligen Größe gewählt.</p>
+      </div>
+      <div class="graph-wrap">
+        <svg id="overviewGraph" viewBox="0 0 900 390" role="img" aria-label="Gemeinsame Übersicht der Funktionen s(t), v(t) und a(t)"></svg>
+      </div>
+      <div class="legend">
+        <span><span class="dot s"></span> Weg s(t)</span>
+        <span><span class="dot v"></span> Geschwindigkeit v(t)</span>
+        <span><span class="dot a"></span> Beschleunigung a(t)</span>
+        <span><span class="dot warn"></span> t = 0,50 s: Übergang und maximale Geschwindigkeit</span>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="arbeitsauftrag">
+    <h2 id="arbeitsauftrag">4. Arbeitsauftrag</h2>
+    <p>Arbeite zuerst mit dem Regler. Notiere deine Beobachtungen. Öffne die Hinweise erst danach.</p>
+
+    <div class="task-grid">
+      <div class="task">
+        <p>1. Bewege den Zeitregler langsam von 0 s bis 1 s. Beschreibe, wie sich s(t) verändert.</p>
+        <textarea aria-label="Antwort zu Aufgabe 1" placeholder="Meine Beobachtung ..."></textarea>
+        <details>
+          <summary>Hinweis anzeigen</summary>
+          <p>Achte darauf, ob der Weg kleiner wird, gleich bleibt oder größer wird. Achte auch darauf, ob der s-Graph steiler oder flacher wird.</p>
+        </details>
+      </div>
+
+      <div class="task">
+        <p>2. An welcher Stelle ist der Graph von s(t) am steilsten?</p>
+        <textarea aria-label="Antwort zu Aufgabe 2" placeholder="Der s-Graph ist am steilsten bei ..."></textarea>
+        <details>
+          <summary>Lösung kontrollieren</summary>
+          <p>Der s-Graph ist bei t = 0,50 s am steilsten. Dort ist die Geschwindigkeit maximal.</p>
+        </details>
+      </div>
+
+      <div class="task">
+        <p>3. Was erkennst du gleichzeitig am Graphen von v(t)?</p>
+        <textarea aria-label="Antwort zu Aufgabe 3" placeholder="Am v-Graphen erkenne ich ..."></textarea>
+        <details>
+          <summary>Hinweis anzeigen</summary>
+          <p>Vergleiche den Zeitpunkt der steilsten Stelle bei s(t) mit dem höchsten Punkt von v(t).</p>
+        </details>
+      </div>
+
+      <div class="task">
+        <p>4. Wann wechselt a(t) das Vorzeichen?</p>
+        <textarea aria-label="Antwort zu Aufgabe 4" placeholder="a(t) wechselt das Vorzeichen bei ..."></textarea>
+        <details>
+          <summary>Lösung kontrollieren</summary>
+          <p>a(t) = 540 − 1080 · t. Das Vorzeichen wechselt bei t = 0,50 s. Dann gilt a(t) = 0.</p>
+        </details>
+      </div>
+
+      <div class="task">
+        <p>5. Was bedeutet dieser Vorzeichenwechsel für die Bewegung?</p>
+        <textarea aria-label="Antwort zu Aufgabe 5" placeholder="Der Vorzeichenwechsel bedeutet ..."></textarea>
+        <details>
+          <summary>Hinweis anzeigen</summary>
+          <p>Vor t = 0,50 s steigt v(t). Nach t = 0,50 s fällt v(t). Die Düse bewegt sich weiter nach vorne, aber langsamer.</p>
+        </details>
+      </div>
+
+      <div class="task">
+        <p>6. Beschreibe den Zusammenhang zwischen s(t), v(t) und a(t) in eigenen Worten.</p>
+        <textarea aria-label="Antwort zu Aufgabe 6" placeholder="In eigenen Worten ..."></textarea>
+        <details>
+          <summary>Lösung kontrollieren</summary>
+          <p>Die Steigung des Weg-Graphen ist die Geschwindigkeit. Die Steigung des Geschwindigkeits-Graphen ist die Beschleunigung. Wenn a(t) positiv ist, nimmt v(t) zu. Wenn a(t) negativ ist, nimmt v(t) ab.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+  "use strict";
+
+  const NS = "http://www.w3.org/2000/svg";
+
+  function s(t) {
+    return 270 * t * t - 180 * t * t * t;
+  }
+
+  function v(t) {
+    return 540 * t - 540 * t * t;
+  }
+
+  function a(t) {
+    return 540 - 1080 * t;
+  }
+
+  function fmt(value, digits = 2) {
+    return value.toLocaleString("de-DE", {
+      minimumFractionDigits: digits,
+      maximumFractionDigits: digits
+    });
+  }
+
+  function fmtTick(value) {
+    const rounded = Math.round(value * 100) / 100;
+    if (Math.abs(rounded) < 0.000001) return "0";
+    if (Math.abs(rounded - Math.round(rounded)) < 0.000001) {
+      return String(Math.round(rounded)).replace("-", "−");
+    }
+    return rounded.toLocaleString("de-DE", { maximumFractionDigits: 1 }).replace("-", "−");
+  }
+
+  function makeEl(name, attrs = {}, text = null) {
+    const node = document.createElementNS(NS, name);
+    for (const key in attrs) node.setAttribute(key, attrs[key]);
+    if (text !== null) node.textContent = text;
+    return node;
+  }
+
+  const graphBase = {
+    W: 720,
+    H: 340,
+    m: { left: 76, right: 24, top: 28, bottom: 55 },
+    xMin: 0,
+    xMax: 1
+  };
+
+  const configs = {
+    s: {
+      ...graphBase,
+      yMin: 0,
+      yMax: 100,
+      yTicks: [0, 15, 30, 45, 60, 75, 90],
+      yLabel: "s(t) in mm",
+      curveClass: "curve curve-s",
+      pointClass: "point point-s",
+      fn: s,
+      derivative: v,
+      svgId: "graphS",
+      milestoneLabel: "steilste Stelle"
+    },
+    v: {
+      ...graphBase,
+      yMin: 0,
+      yMax: 150,
+      yTicks: [0, 30, 60, 90, 120, 135, 150],
+      yLabel: "v(t) in mm/s",
+      curveClass: "curve curve-v",
+      pointClass: "point point-v",
+      fn: v,
+      derivative: a,
+      svgId: "graphV",
+      milestoneLabel: "max. v"
+    },
+    a: {
+      ...graphBase,
+      yMin: -600,
+      yMax: 600,
+      yTicks: [-540, -270, 0, 270, 540],
+      yLabel: "a(t) in mm/s²",
+      curveClass: "curve curve-a",
+      pointClass: "point point-a",
+      fn: a,
+      derivative: null,
+      svgId: "graphA",
+      milestoneLabel: "a = 0"
+    }
+  };
+
+  function plotWidth(cfg) {
+    return cfg.W - cfg.m.left - cfg.m.right;
+  }
+
+  function plotHeight(cfg) {
+    return cfg.H - cfg.m.top - cfg.m.bottom;
+  }
+
+  function xScale(t, cfg) {
+    return cfg.m.left + ((t - cfg.xMin) / (cfg.xMax - cfg.xMin)) * plotWidth(cfg);
+  }
+
+  function yScale(y, cfg) {
+    return cfg.H - cfg.m.bottom - ((y - cfg.yMin) / (cfg.yMax - cfg.yMin)) * plotHeight(cfg);
+  }
+
+  function graphPath(cfg, fn) {
+    let d = "";
+    const steps = 260;
+    for (let i = 0; i <= steps; i++) {
+      const t = cfg.xMin + (i / steps) * (cfg.xMax - cfg.xMin);
+      const x = xScale(t, cfg);
+      const y = yScale(fn(t), cfg);
+      d += (i === 0 ? "M" : "L") + x.toFixed(2) + "," + y.toFixed(2);
+    }
+    return d;
+  }
+
+  function addText(svg, x, y, text, className = "tick-text", anchor = "middle") {
+    svg.appendChild(makeEl("text", {
+      x,
+      y,
+      class: className,
+      "text-anchor": anchor
+    }, text));
+  }
+
+  function drawAxes(svg, cfg) {
+    const left = cfg.m.left;
+    const right = cfg.W - cfg.m.right;
+    const top = cfg.m.top;
+    const bottom = cfg.H - cfg.m.bottom;
+    const xTicks = [0, 0.2, 0.4, 0.6, 0.8, 1];
+
+    xTicks.forEach(tick => {
+      const x = xScale(tick, cfg);
+      svg.appendChild(makeEl("line", { x1: x, y1: top, x2: x, y2: bottom, class: "grid-line" }));
+      addText(svg, x, cfg.H - 22, fmtTick(tick), "tick-text");
+    });
+
+    cfg.yTicks.forEach(tick => {
+      const y = yScale(tick, cfg);
+      svg.appendChild(makeEl("line", {
+        x1: left,
+        y1: y,
+        x2: right,
+        y2: y,
+        class: Math.abs(tick) < 0.000001 ? "zero-line" : "grid-line"
+      }));
+      addText(svg, left - 10, y + 4, fmtTick(tick), "tick-text", "end");
+    });
+
+    const xAxisY = cfg.yMin <= 0 && cfg.yMax >= 0 ? yScale(0, cfg) : bottom;
+    svg.appendChild(makeEl("line", { x1: left, y1: xAxisY, x2: right, y2: xAxisY, class: "axis" }));
+    svg.appendChild(makeEl("line", { x1: left, y1: top, x2: left, y2: bottom, class: "axis" }));
+
+    addText(svg, right - 10, cfg.H - 10, "t in s", "axis-label", "end");
+    addText(svg, left, 17, cfg.yLabel, "axis-label", "start");
+  }
+
+  function addMilestone(svg, cfg) {
+    const tM = 0.5;
+    const x = xScale(tM, cfg);
+    const top = cfg.m.top;
+    const bottom = cfg.H - cfg.m.bottom;
+
+    svg.appendChild(makeEl("line", { x1: x, y1: top, x2: x, y2: bottom, class: "milestone" }));
+
+    const yValue = cfg.fn(tM);
+    const y = yScale(yValue, cfg);
+    svg.appendChild(makeEl("circle", { cx: x, cy: y, r: 5.6, class: cfg.pointClass }));
+
+    const labelX = Math.min(x + 14, cfg.W - cfg.m.right - 86);
+    const labelY = Math.max(top + 18, y - 15);
+    svg.appendChild(makeEl("rect", {
+      x: labelX - 5,
+      y: labelY - 16,
+      width: 112,
+      height: 24,
+      rx: 7,
+      class: "label-bg"
+    }));
+    addText(svg, labelX + 51, labelY + 1, cfg.milestoneLabel, "mini-label", "middle");
+  }
+
+  function addCurrentMarker(svg, cfg, t) {
+    const value = cfg.fn(t);
+    const x = xScale(t, cfg);
+    const y = yScale(value, cfg);
+    const top = cfg.m.top;
+    const bottom = cfg.H - cfg.m.bottom;
+    const left = cfg.m.left;
+
+    svg.appendChild(makeEl("line", { x1: x, y1: top, x2: x, y2: bottom, class: "helper" }));
+    svg.appendChild(makeEl("line", { x1: left, y1: y, x2: x, y2: y, class: "helper-horizontal" }));
+    svg.appendChild(makeEl("circle", { cx: x, cy: y, r: 7.2, class: "point point-current" }));
+
+    const label = "t = " + fmt(t, 2) + " s";
+    const labelX = Math.min(Math.max(x + 10, left + 56), cfg.W - cfg.m.right - 62);
+    const labelY = top + 15;
+    svg.appendChild(makeEl("rect", {
+      x: labelX - 47,
+      y: labelY - 15,
+      width: 110,
+      height: 24,
+      rx: 8,
+      class: "label-bg"
+    }));
+    addText(svg, labelX + 8, labelY + 2, label, "mini-label", "middle");
+  }
+
+  function addTangent(svg, cfg, t) {
+    if (!cfg.derivative) return;
+
+    const y0 = cfg.fn(t);
+    const slope = cfg.derivative(t);
+    const dt = 0.09;
+    const t1 = Math.max(cfg.xMin, t - dt);
+    const t2 = Math.min(cfg.xMax, t + dt);
+    const y1 = y0 + slope * (t1 - t);
+    const y2 = y0 + slope * (t2 - t);
+
+    svg.appendChild(makeEl("line", {
+      x1: xScale(t1, cfg),
+      y1: yScale(y1, cfg),
+      x2: xScale(t2, cfg),
+      y2: yScale(y2, cfg),
+      class: "tangent"
+    }));
+  }
+
+  function drawGraph(cfg, t) {
+    const svg = document.getElementById(cfg.svgId);
+    svg.innerHTML = "";
+    drawAxes(svg, cfg);
+    addMilestone(svg, cfg);
+    svg.appendChild(makeEl("path", { d: graphPath(cfg, cfg.fn), class: cfg.curveClass }));
+    addTangent(svg, cfg, t);
+    addCurrentMarker(svg, cfg, t);
+  }
+
+  function overviewY(value, row) {
+    return row.bottom - ((value - row.yMin) / (row.yMax - row.yMin)) * (row.bottom - row.top);
+  }
+
+  function drawOverview(t) {
+    const svg = document.getElementById("overviewGraph");
+    svg.innerHTML = "";
+
+    const W = 900;
+    const H = 390;
+    const left = 88;
+    const right = 872;
+    const top = 25;
+    const bottom = 345;
+    const gap = 18;
+    const rowH = (bottom - top - 2 * gap) / 3;
+
+    const rows = [
+      { name: "s(t)", unit: "mm", fn: s, yMin: 0, yMax: 90, className: "curve curve-s", top: top, bottom: top + rowH },
+      { name: "v(t)", unit: "mm/s", fn: v, yMin: 0, yMax: 135, className: "curve curve-v", top: top + rowH + gap, bottom: top + 2 * rowH + gap },
+      { name: "a(t)", unit: "mm/s²", fn: a, yMin: -540, yMax: 540, className: "curve curve-a", top: top + 2 * (rowH + gap), bottom: top + 3 * rowH + 2 * gap }
+    ];
+
+    function ox(x) {
+      return left + x * (right - left);
+    }
+
+    [0, 0.2, 0.4, 0.6, 0.8, 1].forEach(tick => {
+      const x = ox(tick);
+      svg.appendChild(makeEl("line", { x1: x, y1: top - 4, x2: x, y2: bottom, class: "grid-line" }));
+      addText(svg, x, H - 20, fmtTick(tick), "tick-text");
+    });
+
+    rows.forEach(row => {
+      svg.appendChild(makeEl("rect", {
+        x: left,
+        y: row.top,
+        width: right - left,
+        height: row.bottom - row.top,
+        rx: 9,
+        fill: "#fcfdff",
+        stroke: "#dbe3f0"
+      }));
+
+      const zero = row.yMin <= 0 && row.yMax >= 0 ? overviewY(0, row) : row.bottom;
+      svg.appendChild(makeEl("line", { x1: left, y1: zero, x2: right, y2: zero, class: "zero-line" }));
+
+      addText(svg, left - 12, row.top + 20, row.name, "overview-label", "end");
+      addText(svg, left - 12, row.top + 39, row.unit, "tick-text", "end");
+
+      let d = "";
+      const steps = 260;
+      for (let i = 0; i <= steps; i++) {
+        const tx = i / steps;
+        const x = ox(tx);
+        const y = overviewY(row.fn(tx), row);
+        d += (i === 0 ? "M" : "L") + x.toFixed(2) + "," + y.toFixed(2);
+      }
+      svg.appendChild(makeEl("path", { d, class: row.className }));
+    });
+
+    const xMilestone = ox(0.5);
+    svg.appendChild(makeEl("line", { x1: xMilestone, y1: top - 4, x2: xMilestone, y2: bottom, class: "milestone" }));
+    addText(svg, xMilestone + 8, top - 8, "t = 0,50 s", "mini-label", "start");
+
+    const xCurrent = ox(t);
+    svg.appendChild(makeEl("line", { x1: xCurrent, y1: top - 4, x2: xCurrent, y2: bottom, class: "helper" }));
+
+    rows.forEach(row => {
+      const y = overviewY(row.fn(t), row);
+      svg.appendChild(makeEl("circle", { cx: xCurrent, cy: y, r: 6.6, class: "point point-current" }));
+    });
+
+    addText(svg, right, H - 6, "t in s", "axis-label", "end");
+  }
+
+  function updateNotes(t, sv, vv, av) {
+    const nearMid = Math.abs(t - 0.5) < 0.006;
+
+    let sMessage;
+    if (nearMid) {
+      sMessage = "Hier ist der s-Graph am steilsten. Genau hier ist v(t) maximal.";
+    } else if (t < 0.5) {
+      sMessage = "Der s-Graph steigt und wird steiler. Die Geschwindigkeit v(t) nimmt zu.";
+    } else {
+      sMessage = "Der s-Graph steigt weiter, wird aber flacher. Die Geschwindigkeit v(t) nimmt ab.";
+    }
+
+    let vMessage;
+    if (nearMid) {
+      vMessage = "Die Steigung des v-Graphen ist 0. Der v-Graph hat hier seinen höchsten Punkt.";
+    } else if (av > 0) {
+      vMessage = "Der v-Graph steigt. Seine Steigung ist positiv. Also ist a(t) positiv.";
+    } else {
+      vMessage = "Der v-Graph fällt. Seine Steigung ist negativ. Also ist a(t) negativ.";
+    }
+
+    let aMessage;
+    if (nearMid) {
+      aMessage = "a(t) = 0. Hier ist der Übergang vom Beschleunigen zum Bremsen.";
+    } else if (av > 0) {
+      aMessage = "a(t) ist positiv. Die Geschwindigkeit nimmt zu.";
+    } else {
+      aMessage = "a(t) ist negativ. Die Geschwindigkeit nimmt ab.";
+    }
+
+    document.getElementById("sNote").innerHTML =
+      "<strong>Steigung von s(t):</strong> s′(t) = v(t) = " + fmt(vv, 2) + " mm/s.<br>" + sMessage;
+
+    document.getElementById("vNote").innerHTML =
+      "<strong>Steigung von v(t):</strong> v′(t) = a(t) = " + fmt(av, 2) + " mm/s².<br>" + vMessage;
+
+    document.getElementById("aNote").innerHTML =
+      "<strong>Vorzeichen von a(t):</strong> " + aMessage;
+  }
+
+  function updateValues(t) {
+    const sv = s(t);
+    const vv = v(t);
+    const av = a(t);
+    const nearMid = Math.abs(t - 0.5) < 0.006;
+
+    document.getElementById("valueT").textContent = fmt(t, 2) + " s";
+    document.getElementById("valueS").textContent = fmt(sv, 2) + " mm";
+    document.getElementById("valueV").textContent = fmt(vv, 2) + " mm/s";
+    document.getElementById("valueA").textContent = fmt(av, 2) + " mm/s²";
+
+    let status;
+    if (nearMid) {
+      status = "t = 0,50 s: a(t) = 0. Die Geschwindigkeit ist maximal: v(t) = 135,00 mm/s.";
+    } else if (av > 0) {
+      status = "Beschleunigen: a(t) > 0. Der v-Graph steigt. Der s-Graph wird steiler.";
+    } else {
+      status = "Bremsen: a(t) < 0. Der v-Graph fällt. Der s-Graph wird flacher.";
+    }
+    document.getElementById("motionStatus").textContent = status;
+
+    updateNotes(t, sv, vv, av);
+  }
+
+  function render() {
+    const slider = document.getElementById("timeSlider");
+    const t = Number(slider.value);
+
+    drawGraph(configs.s, t);
+    drawGraph(configs.v, t);
+    drawGraph(configs.a, t);
+    drawOverview(t);
+    updateValues(t);
+  }
+
+  document.getElementById("timeSlider").addEventListener("input", render);
+
+  document.querySelectorAll("[data-jump]").forEach(button => {
+    button.addEventListener("click", () => {
+      document.getElementById("timeSlider").value = button.getAttribute("data-jump");
+      render();
+    });
+  });
+
+  render();
+</script>
+</body>
+</html>
